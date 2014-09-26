@@ -3,7 +3,6 @@
 
 module Main where
 
-
 import qualified Graphics.UI.SDL as SDL
 import qualified Graphics.UI.SDL.Image as Image
 import Graphics.UI.SDL.Types
