@@ -152,3 +152,20 @@ executable lesson15
   default-language:    Haskell2010
   ghc-options:         -Wall -fno-warn-unused-do-bind
 
+
+
+
+
+
+
+
+executable lesson17
+  main-is:             lesson17.hs
+  build-depends:       base >=4.6,
+                       sdl2,
+                       sdl2-image,
+                       mtl
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  ghc-options:         -Wall -fno-warn-unused-do-bind
+
