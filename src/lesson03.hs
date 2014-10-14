@@ -1,34 +1,36 @@
-module Main where
-
-import qualified Graphics.UI.SDL as SDL
+import qualified Cove
+import Cove.Utilities
 import Control.Monad
-import Data.Bits
-import Foreign.C.String
-import Foreign.C.Types
-import Foreign.Marshal.Alloc
-import Foreign.Marshal.Utils
-import Foreign.Ptr
-import Foreign.Storable
-import GHC.Word
+
+import qualified  Graphics.UI.SDL as SDL
+import Cove.Entity
 
 
-type Risky a = Either String a
+windowTitle :: String
+windowTitle = "Lesson 03"
 
-
-lessonTitle :: String
-lessonTitle = "lesson03"
-
-screenWidth :: CInt
+screenWidth :: Int
 screenWidth = 640
 
-screenHeight :: CInt
+screenHeight :: Int
 screenHeight = 480
 
 
 main :: IO ()
-main = do
-    initializeSDL [SDL.initFlagVideo] >>= either throwSDLError return
-    window <- createWindow lessonTitle >>= either throwSDLError return
+main = Cove.withSDLContext (windowTitle, screenWidth, screenHeight) $ \renderer -> do
+
+    let assetPaths = ["./assets/walk.png"]
+
+    assets <- mapM (superFunc renderer) assetPaths
+
+    let inputSource = Cove.pollEvent `into` updateState
+    let pollDraw = inputSource ~>~ drawState renderer assets
+    let initialState = World { gameover = False, scene = brawler }
+
+    Cove.run (untilM gameover pollDraw) initialState
+
+
+
 
     screenSurface <- SDL.getWindowSurface window
     imageSurface <- loadBitmap "./assets/x.bmp" >>= either throwSDLError return
@@ -36,8 +38,6 @@ main = do
     repeatUntil sdlQuit $ SDL.blitSurface imageSurface nullPtr screenSurface nullPtr >> SDL.updateWindowSurface window
 
     SDL.freeSurface imageSurface
-    SDL.destroyWindow window
-    SDL.quit
 
 
 initializeSDL :: [Word32] -> IO (Risky ())
